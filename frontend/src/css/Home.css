@@ -1,0 +1,29 @@
+.topDiv{
+    border: 1px solid red;
+    height: 97vh;
+}
+
+.heading{
+    text-align: center;
+}
+.chat{
+    display: flex;
+    justify-content:flex-start;
+    align-items: flex-end;
+    border: 1px solid red;
+    height: 80vh;
+
+}
+
+.inp{
+    width: 100vw;
+    height: 30px;
+    padding-left: 10px;
+}
+
+.btn{
+    height: 35px;
+}
+.chatDiv{
+    
+}
