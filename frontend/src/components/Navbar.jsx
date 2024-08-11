@@ -20,6 +20,10 @@ import { useState } from 'react';
 import SideDrawer from './SideDrawer';
 import { useAuth } from './Auth';
 import { NavLink } from 'react-router-dom';
+import { auth } from './firebase';
+import { signOut } from "firebase/auth";
+import { toast } from 'react-toastify';
+
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -89,9 +93,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const logout = () => {
+    signOut(auth);
+    toast.success("Logout Successfull !")
+    setAnchorEl(null);
+    setMobileMoreAnchorEl(null);
+
+  };
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
-    <Menu style={{marginTop:"30px"}}
+    <Menu style={{marginTop:"30px"}} key={menuId}
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: 'top',
@@ -103,16 +115,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       transformOrigin={{
         vertical: 'top',
         horizontal: 'right',
+        
       
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {user ?<> <MenuItem onClick={()=>setToggleDrawer(!toggleDrawer)}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem></>:
-      
-      <><MenuItem >Logout</MenuItem>
-     </>}
+      {user==null ? (
+    [
+      <NavLink to='/login' className='navlink'> <MenuItem>Login</MenuItem></NavLink>,
+      <NavLink to='/register' className='navlink'> <MenuItem>Register</MenuItem></NavLink>
+    ]
+  ) : (
+    [
+      <MenuItem key="profile" onClick={() => setToggleDrawer(!toggleDrawer)}>Profile</MenuItem>,
+      <MenuItem key="account" onClick={handleMenuClose}>My account</MenuItem>,
+      <MenuItem key="logout" onClick={logout}>Logout</MenuItem>
+
+    ]
+  )}
     </Menu>
   );
 
@@ -190,7 +211,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-          <NavLink to='/' className='navlink'>Welcome to Baat-Cheet</NavLink>
+          <NavLink to='/' className='navlink' style={{color:"white"}}>Welcome to Baat-Cheet</NavLink>
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -248,7 +269,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       
     </Box>
     {/* {toggleDrawer?<SideDrawer></SideDrawer>:""}  */}
-    {toggleDrawer?<SideDrawer setAnchorEl={setAnchorEl}></SideDrawer>:""} 
+    {toggleDrawer?<SideDrawer setAnchorEl={setAnchorEl} handleMobileMenuClose={handleMobileMenuClose} setToggleDrawer={setToggleDrawer}></SideDrawer>:""} 
 </>
     
   );

@@ -15,8 +15,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { toast } from 'react-toastify';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithEmailAndPassword ,signInWithPopup} from "firebase/auth";
 import { auth } from '../components/firebase';
+import GoogleButton from "react-google-button";
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -73,6 +74,34 @@ const Login=()=> {
 
     return;
   }
+  };
+
+  const googleProvider = new GoogleAuthProvider();
+
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((res) => {
+       toast.success(`Registered Successfully. Welcome ${res.user.email}`)
+       setTimeout(() => {
+        navigate('/')
+      },2000)
+
+      })
+      .catch((error) => {
+        console.log(error)
+        
+    let errorMessage = '';
+
+    switch (error.code) {
+      case 'auth/popup-closed-by-user':
+        errorMessage = 'Login Failed . Please try again';
+        break;
+    }
+
+    toast.error(errorMessage); 
+
+      return;
+      });
   };
 
 
@@ -138,7 +167,17 @@ const Login=()=> {
             >
               Login
             </Button>
-            <Grid container>
+
+            <Box className='google'>
+              <span style={{fontWeight:"600"}}>OR</span>
+              <GoogleButton
+                style={{ width: "100%", outline: "none" }}
+                onClick={signInWithGoogle}
+              />
+            </Box>
+
+<br />
+            <Grid container style={{marginBottom:"25px"}}>
               <Grid item xs>
                 {/* <NavLink to="forgotPassword" variant="body2">
                   Forgot password?

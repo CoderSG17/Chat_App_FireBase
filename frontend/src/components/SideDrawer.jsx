@@ -21,6 +21,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import { useEffect } from 'react';
 import About from './About';
 
+
 const drawerWidth = 400;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -75,17 +76,22 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-start',
 }));
 
-export default function SideDrawer({setAnchorEl}) {
+const  SideDrawer=({setAnchorEl,handleMobileMenuClose,setToggleDrawer}) =>{
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
 
   // const handleDrawerOpen = () => {
   // };
+
+ 
+
+
   
   useEffect(() => {
     setOpen(true);
     setAnchorEl(null);
+    handleMobileMenuClose(null);
   },[])
 
   const handleDrawerClose = () => {
@@ -113,9 +119,11 @@ export default function SideDrawer({setAnchorEl}) {
         </DrawerHeader>
         <Divider />
         
-            <About></About>
+            <About setToggleDrawer={setToggleDrawer}></About>
         
       </Drawer>
     </Box>
   );
 }
+
+export default SideDrawer

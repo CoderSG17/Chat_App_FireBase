@@ -1,17 +1,47 @@
-import React from 'react'
-import { useAuth } from '../components/Auth'
-import Navbar from '../components/Navbar'
+// import React from 'react'
+// import { useAuth } from '../components/Auth'
+// import Navbar from '../components/Navbar'
 
-const Home = () => {
-    const {user} = useAuth()
-    console.log(user)
+// const Home = () => {
+//     const {user} = useAuth()
+//     console.log(user)
     
+//   return (
+//     <>
+//     <Navbar></Navbar>
+    
+//     </>
+//   )
+// }
+
+// export default Home
+
+
+
+import * as React from 'react';
+import { CssVarsProvider } from '@mui/joy/styles';
+import CssBaseline from '@mui/joy/CssBaseline';
+import Box from '@mui/joy/Box';
+import Sidebar from '../ChatComponents/Sidebar';
+import Header from '../ChatComponents/Header';
+import MyMessages from '../ChatComponents/MyMessages';
+import Navbar from '../components/Navbar';
+
+export default function Home() {
   return (
     <>
-    <Navbar></Navbar>
-    
+    <Navbar ></Navbar>
+    <br /><br /><br />
+    <CssVarsProvider disableTransitionOnChange>
+      <CssBaseline />
+      <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
+        <Sidebar />
+        <Header />
+        <Box component="main" className="MainContent" sx={{ flex: 1 }}>
+          <MyMessages />
+        </Box>
+      </Box>
+    </CssVarsProvider>
     </>
-  )
+  );
 }
-
-export default Home
