@@ -2,47 +2,70 @@ import * as React from 'react';
 import Box from '@mui/joy/Box';
 import ListDivider from '@mui/joy/ListDivider';
 import ListItem from '@mui/joy/ListItem';
-import ListItemButton, { ListItemButtonProps } from '@mui/joy/ListItemButton';
+import ListItemButton from '@mui/joy/ListItemButton';
 import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from './AvatarWithStatus';
-import { ChatProps, MessageProps, UserProps } from '../../types';
 import { toggleMessagesPane } from '../../utils';
+import { useAuth } from '../components/Auth';
+import { db } from '../components/firebase';
+import { doc , updateDoc } from 'firebase/firestore';
 
-type ChatListItemProps = ListItemButtonProps & {
-  id: string;
-  unread?: boolean;
-  sender: UserProps;
-  messages: MessageProps[];
-  selectedChatId?: string;
-  setSelectedChat: (chat: ChatProps) => void;
-};
 
-export default function ChatListItem(props: ChatListItemProps) {
-  const { id, sender, messages, selectedChatId, setSelectedChat } = props;
-  const selected = selectedChatId === id;
+export default function ChatListItem({chat, setSelectedChat ,selectedChat,allChats}) {
+  const {changeChat,userData} = useAuth()
+
+  console.log(chat)
+  console.log(allChats)
+
+  const handleSelect=async(chat)=>{
+    try {
+      const userChats = allChats.map((item)=>{
+        const {user , ...rest } = item;
+        return rest
+      }
+    )
+
+      const chatIndex = userChats.findIndex(item=>item.chatId === chat.chatId);
+
+      userChats[chatIndex].isSeen=true;
+
+      const userChatsRef = doc(db, "userchats" , userData.id);
+
+      await updateDoc(userChatsRef,{
+        chats:userChats,
+      })
+      changeChat(chat.chatId , chat.user)
+
+
+    } catch (error) {
+     console.log(error) 
+    }
+  }
+
+  const handleClick=()=>{
+    handleSelect(chat); 
+    setSelectedChat(chat.chatId); 
+  }
+
   return (
     <React.Fragment>
       <ListItem>
         <ListItemButton
-          onClick={() => {
-            toggleMessagesPane();
-            setSelectedChat({ id, sender, messages });
-          }}
-          selected={selected}
+          onClick={handleClick}
           color="neutral"
           sx={{
             flexDirection: 'column',
             alignItems: 'initial',
             gap: 1,
           }}
-        >
+>
           <Stack direction="row" spacing={1.5}>
-            <AvatarWithStatus online={sender.online} src={sender.avatar} />
+            <AvatarWithStatus  userImg = {chat?.user.avatar} />
             <Box sx={{ flex: 1 }}>
-              <Typography level="title-sm">{sender.name}</Typography>
-              <Typography level="body-sm">{sender.username}</Typography>
+              <Typography level="title-sm">{chat?.user.name}</Typography>
+              <Typography level="body-sm">{chat?.user.email}</Typography>
             </Box>
             <Box
               sx={{
@@ -50,7 +73,7 @@ export default function ChatListItem(props: ChatListItemProps) {
                 textAlign: 'right',
               }}
             >
-              {messages[0].unread && (
+             {!chat?.isSeen && (
                 <CircleIcon sx={{ fontSize: 12 }} color="primary" />
               )}
               <Typography
@@ -70,9 +93,10 @@ export default function ChatListItem(props: ChatListItemProps) {
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              marginLeft:"45px"
             }}
           >
-            {messages[0].content}
+          {chat?.lastMessage}   
           </Typography>
         </ListItemButton>
       </ListItem>

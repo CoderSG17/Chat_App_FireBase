@@ -8,17 +8,52 @@ import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
-import { ChatProps } from '../../types';
 import { toggleMessagesPane } from '../../utils';
+import { useAuth } from '../components/Auth';
+import { db } from '../components/firebase';
+import { doc, onSnapshot , getDoc } from "firebase/firestore";
+import { useEffect, useState } from 'react';
 
-type ChatsPaneProps = {
-  chats: ChatProps[];
-  setSelectedChat: (chat: ChatProps) => void;
-  selectedChatId: string;
-};
 
-export default function ChatsPane(props: ChatsPaneProps) {
-  const { chats, setSelectedChat, selectedChatId } = props;
+export default function ChatsPane() {
+  const { user } = useAuth();
+  const [chats, setChats] = useState(); 
+  const [selectedChat, setSelectedChat] = React.useState();
+
+console.log(chats)
+
+useEffect(() => {
+  if (!user?.uid) return;
+
+  const unsub = onSnapshot(doc(db, 'userchats', user.uid), async(res) => {
+    if (res.exists()) {
+      const items = res.data().chats
+
+      const promise = items.map(async(item)=>{
+        const userDocRef =doc(db ,"users" , item.recieverId )
+        const userDocSnap =await getDoc(userDocRef)
+
+        const user = userDocSnap.data()
+
+        return {...item , user}
+      })
+
+      const chatData = await Promise.all(promise)
+      setChats(chatData.sort((a,b)=>b.updatedAt - a.updatedAt))
+
+    } else {
+      console.log("No such document!");
+      setChats([]); 
+    }
+  });
+
+  return () => unsub();
+}, [user?.uid]);
+
+
+
+
+
   return (
     <Sheet
       sx={{
@@ -91,15 +126,11 @@ export default function ChatsPane(props: ChatsPaneProps) {
           '--ListItem-paddingX': '1rem',
         }}
       >
-        {chats.map((chat) => (
-          <ChatListItem
-            key={chat.id}
-            {...chat}
-            setSelectedChat={setSelectedChat}
-            selectedChatId={selectedChatId}
+        {chats?.map((chat) => (
+          <ChatListItem chat={chat} allChats={chats} setSelectedChat={setSelectedChat} selectedChat={selectedChat}
           />
         ))}
-      </List>
+      </List> 
     </Sheet>
   );
 }

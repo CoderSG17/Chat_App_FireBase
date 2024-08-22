@@ -19,7 +19,7 @@ import { toggleButtonClasses } from '@mui/material';
 import { useState } from 'react';
 import SideDrawer from './SideDrawer';
 import { useAuth } from './Auth';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { auth } from './firebase';
 import { signOut } from "firebase/auth";
 import { toast } from 'react-toastify';
@@ -68,6 +68,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
  const Navbar=()=> {
 
+  const navigate = useNavigate()
+
   const {user} = useAuth();
    const [toggleDrawer,setToggleDrawer] = useState();
    const [anchorEl, setAnchorEl] = useState(null);
@@ -96,6 +98,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   const logout = () => {
     signOut(auth);
     toast.success("Logout Successfull !")
+    setTimeout(() => {
+
+      navigate("/login")
+    },2000)
     setAnchorEl(null);
     setMobileMoreAnchorEl(null);
 
@@ -211,7 +217,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' } }}
           >
-          <NavLink to='/' className='navlink' style={{color:"white"}}>Welcome to Baat-Cheet</NavLink>
+          {user==null?<NavLink to='/login' className='navlink' style={{color:"white"}}>Welcome to Baat-Cheet</NavLink> : <NavLink to='/' className='navlink' style={{color:"white"}}>Welcome to Baat-Cheet</NavLink>}
           </Typography>
           <Search>
             <SearchIconWrapper>

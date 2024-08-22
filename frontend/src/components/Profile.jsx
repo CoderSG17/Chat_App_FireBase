@@ -9,6 +9,7 @@ import { Avatar, Divider } from '@mui/material';
 import { toast } from 'react-toastify';
 import { signOut } from "firebase/auth";
 import { auth } from './firebase';
+import { useAuth } from './Auth';
 
 
 const bull = (
@@ -20,11 +21,17 @@ const bull = (
   </Box>
 );
 
-const About = ({setToggleDrawer}) => {
+const Profile = ({setToggleDrawer}) => {
+
+  const {userData} = useAuth();
   
   const logout = () => {
     signOut(auth);
     toast.success("Logout Successfull !")
+    setTimeout(() => {
+
+      navigate("/login")
+    },2000)
     setToggleDrawer(false);
   };
 
@@ -40,27 +47,27 @@ const About = ({setToggleDrawer}) => {
             cursor: "pointer",
             backgroundColor: "#EEBC1D",
           }}
-        // src={user.photoURL}
-        // alt={user.displayName || user.email}
+        src={userData?.avatar}
+        alt={"user image"}
         />
       </Box>
       <Divider></Divider>
       <Box sx={{ minWidth: 275, height: "330px", marginTop: "50px", display: 'flex', justifyContent: 'center', alignItems: "centre", border: "1px solid red " }}>
-        <Card variant="text" style={{ border: "1px solid red ", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "300px" }}><React.Fragment>
+        <Card variant="text" style={{ border: "1px solid red ", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", width: "350px" }}><React.Fragment>
           <CardContent>
             <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              Word of the Day
+              Name : {userData?.name}
             </Typography>
             <Typography variant="h5" component="div">
-              be{bull}nev{bull}o{bull}lent
+              Email: {userData?.email}
             </Typography>
             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              adjective
+              Phone: {userData?.phone?userData.phone:"Phone Number not provided"}
             </Typography>
             <Typography variant="body2">
-              well meaning and kindly.
+             About: {userData?.about?userData?.about:"About not provided"}
               <br />
-              {'"a benevolent smile"'}
+              {/* {'"a benevolent smile"'} */}
             </Typography>
           </CardContent>
           <CardActions style={{ display: 'flex', justifyContent: 'center' }}>
@@ -73,4 +80,4 @@ const About = ({setToggleDrawer}) => {
   );
 }
 
-export default About
+export default Profile

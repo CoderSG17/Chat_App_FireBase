@@ -32,6 +32,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from "../../utils";
+import { useState } from 'react';
+import AddUser from '../components/AddUser';
+import { useAuth } from '../components/Auth';
+import { signOut } from "firebase/auth";
+import { toast } from 'react-toastify';
+import { auth } from '../components/firebase';
+import { useNavigate } from 'react-router-dom';
 
 function Toggler(props: {
   defaultExpanded?: boolean;
@@ -63,7 +70,22 @@ function Toggler(props: {
 }
 
 export default function Sidebar() {
+
+  const [showAddUser, setShowAddUser] = useState(false);
+  const {userData} =useAuth()
+  const navigate = useNavigate();
+
+  const logout = () => {
+    signOut(auth);
+    toast.success("Logout Successfully !")
+    setTimeout(() => {
+
+      navigate("/login")
+    },2000)
+  };
+
   return (
+    <>
     <Sheet
       className="Sidebar"
       sx={{
@@ -237,7 +259,7 @@ export default function Sidebar() {
                   </ListItemButton>
                 </ListItem>
                 <ListItem>
-                  <ListItemButton>Create a new user</ListItemButton>
+                  <ListItemButton onClick={()=>setShowAddUser(!showAddUser)}>Create a new user</ListItemButton>
                 </ListItem>
                 <ListItem>
                   <ListItemButton>Roles & permission</ListItemButton>
@@ -245,6 +267,8 @@ export default function Sidebar() {
               </List>
             </Toggler>
           </ListItem>
+        </List>
+        <List>
         </List>
         {/* <List
           size="sm"
@@ -296,16 +320,22 @@ export default function Sidebar() {
         <Avatar
           variant="outlined"
           size="sm"
-          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
+          src={userData?.avatar}
+          alt='User image'
         />
         <Box sx={{ minWidth: 0, flex: 1 }}>
-          <Typography level="title-sm">Siriwat K.</Typography>
-          <Typography level="body-xs">siriwatk@test.com</Typography>
+          <Typography level="title-sm">{userData?.name}</Typography>
+          <Typography level="body-xs">{userData?.email}</Typography>
         </Box>
-        <IconButton size="sm" variant="plain" color="neutral">
-          <LogoutRoundedIcon />
+        <IconButton size="sm" variant="plain" color="neutral" onClick={logout}>
+          <LogoutRoundedIcon/>
         </IconButton>
       </Box>
+      
     </Sheet>
+    <div style={{position:"absolute" , zIndex:"1000"}}>
+      {showAddUser?<AddUser setShowAddUser={setShowAddUser}></AddUser>:""}
+      </div>
+    </>
   );
 }

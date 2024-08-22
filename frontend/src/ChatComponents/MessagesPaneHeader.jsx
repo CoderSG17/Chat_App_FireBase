@@ -9,15 +9,14 @@ import CircleIcon from '@mui/icons-material/Circle';
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 import PhoneInTalkRoundedIcon from '@mui/icons-material/PhoneInTalkRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
-import { UserProps } from '../../types';
 import { toggleMessagesPane } from '../../utils';
+import { useAuth } from '../components/Auth';
 
-type MessagesPaneHeaderProps = {
-  sender: UserProps;
-};
 
-export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
-  const { sender } = props;
+
+export default function MessagesPaneHeader() {
+  const {funUser} = useAuth()
+  console.log(funUser)
   return (
     <Stack
       direction="row"
@@ -42,35 +41,35 @@ export default function MessagesPaneHeader(props: MessagesPaneHeaderProps) {
         >
           <ArrowBackIosNewRoundedIcon />
         </IconButton>
-        <Avatar size="lg" src={sender.avatar} />
+        <Avatar size="lg" src={funUser?.avatar} alt='error'  />
         <div>
           <Typography
             fontWeight="lg"
             fontSize="lg"
             component="h2"
             noWrap
-            endDecorator={
-              sender.online ? (
-                <Chip
-                  variant="outlined"
-                  size="sm"
-                  color="neutral"
-                  sx={{
-                    borderRadius: 'sm',
-                  }}
-                  startDecorator={
-                    <CircleIcon sx={{ fontSize: 8 }} color="success" />
-                  }
-                  slotProps={{ root: { component: 'span' } }}
-                >
-                  Online
-                </Chip>
-              ) : undefined
-            }
+            // endDecorator={
+            //   sender.online ? (
+            //     <Chip
+            //       variant="outlined"
+            //       size="sm"
+            //       color="neutral"
+            //       sx={{
+            //         // borderRadius: 'sm',
+            //       }}
+            //       startDecorator={
+            //         <CircleIcon sx={{ fontSize: 8 }} color="success" />
+            //       }
+            //       slotProps={{ root: { component: 'span' } }}
+            //     >
+            //       Online
+            //     </Chip>
+            //   ) : undefined
+            // }
           >
-            {sender.name}
+            {funUser?.name}
           </Typography>
-          <Typography level="body-sm">{sender.username}</Typography>
+          <Typography level="body-sm">{funUser?.email}</Typography>
         </div>
       </Stack>
       <Stack spacing={1} direction="row" alignItems="center">

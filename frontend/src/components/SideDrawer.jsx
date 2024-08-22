@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useEffect } from 'react';
-import About from './About';
+import Profile from './Profile';
 
 
 const drawerWidth = 400;
@@ -119,7 +119,7 @@ const  SideDrawer=({setAnchorEl,handleMobileMenuClose,setToggleDrawer}) =>{
         </DrawerHeader>
         <Divider />
         
-            <About setToggleDrawer={setToggleDrawer}></About>
+            <Profile setToggleDrawer={setToggleDrawer}></Profile>
         
       </Drawer>
     </Box>
