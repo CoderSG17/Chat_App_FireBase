@@ -9,7 +9,7 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatListItem from './ChatListItem';
 import { toggleMessagesPane } from '../../utils';
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../Context/Auth';
 import { db } from '../components/firebase';
 import { doc, onSnapshot , getDoc } from "firebase/firestore";
 import { useEffect, useState } from 'react';
@@ -19,7 +19,9 @@ export default function ChatsPane() {
   const { user } = useAuth();
   const [chats, setChats] = useState(); 
   const [selectedChat, setSelectedChat] = React.useState();
-
+  const [search, setSearch] = React.useState();
+  const [filteredChats, setFilteredChats] = useState(chats); 
+  
 console.log(chats)
 
 useEffect(() => {
@@ -51,6 +53,21 @@ useEffect(() => {
 }, [user?.uid]);
 
 
+useEffect(() => {
+  setFilteredChats(chats);
+}, [chats]);  
+
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    const newFilteredChats = chats.filter((elem) =>
+      elem.user.name.toLowerCase().includes(value.toLowerCase())
+    );
+    
+    setFilteredChats(newFilteredChats);
+  };
 
 
 
@@ -89,7 +106,7 @@ useEffect(() => {
         >
           Messages
         </Typography>
-        <IconButton
+        {/* <IconButton
           variant="plain"
           aria-label="edit"
           color="neutral"
@@ -97,7 +114,7 @@ useEffect(() => {
           sx={{ display: { xs: 'none', sm: 'unset' } }}
         >
           <EditNoteRoundedIcon />
-        </IconButton>
+        </IconButton> */}
         <IconButton
           variant="plain"
           aria-label="edit"
@@ -117,6 +134,9 @@ useEffect(() => {
           startDecorator={<SearchRoundedIcon />}
           placeholder="Search"
           aria-label="Search"
+          onChange={handleSearch}
+          value={search}
+          name='search'
         />
       </Box>
       <List
@@ -126,10 +146,10 @@ useEffect(() => {
           '--ListItem-paddingX': '1rem',
         }}
       >
-        {chats?.map((chat) => (
+        {filteredChats?.length>0 ?filteredChats?.map((chat) => (
           <ChatListItem chat={chat} allChats={chats} setSelectedChat={setSelectedChat} selectedChat={selectedChat}
           />
-        ))}
+        )):<div className='nouser'><h5>No user found</h5></div>}
       </List> 
     </Sheet>
   );

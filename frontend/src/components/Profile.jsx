@@ -9,7 +9,8 @@ import { Avatar, Divider } from '@mui/material';
 import { toast } from 'react-toastify';
 import { signOut } from "firebase/auth";
 import { auth } from './firebase';
-import { useAuth } from './Auth';
+import { useAuth } from '../Context/Auth';
+import { NavLink } from 'react-router-dom';
 
 
 const bull = (
@@ -71,6 +72,9 @@ const Profile = ({setToggleDrawer}) => {
             </Typography>
           </CardContent>
           <CardActions style={{ display: 'flex', justifyContent: 'center' }}>
+            <NavLink to='/updateProfile'> 
+            <Button size="small" variant='contained' color="success" >Edit Profile</Button>
+            </NavLink>
             <Button size="small" variant='contained' color="error" onClick={logout}>Logout</Button>
           </CardActions>
         </React.Fragment></Card>

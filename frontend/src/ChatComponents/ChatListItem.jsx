@@ -8,7 +8,7 @@ import Typography from '@mui/joy/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from './AvatarWithStatus';
 import { toggleMessagesPane } from '../../utils';
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../Context/Auth';
 import { db } from '../components/firebase';
 import { doc , updateDoc } from 'firebase/firestore';
 
@@ -16,8 +16,8 @@ import { doc , updateDoc } from 'firebase/firestore';
 export default function ChatListItem({chat, setSelectedChat ,selectedChat,allChats}) {
   const {changeChat,userData} = useAuth()
 
-  console.log(chat)
-  console.log(allChats)
+  // console.log(chat)
+  // console.log(allChats)
 
   const handleSelect=async(chat)=>{
     try {

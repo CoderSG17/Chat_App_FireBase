@@ -18,7 +18,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import { toggleButtonClasses } from '@mui/material';
 import { useState } from 'react';
 import SideDrawer from './SideDrawer';
-import { useAuth } from './Auth';
+import { useAuth } from '../Context/Auth';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { auth } from './firebase';
 import { signOut } from "firebase/auth";
@@ -70,7 +70,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
   const navigate = useNavigate()
 
-  const {user} = useAuth();
+  const {user,isLoggedIn} = useAuth();
    const [toggleDrawer,setToggleDrawer] = useState();
    const [anchorEl, setAnchorEl] = useState(null);
    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -127,15 +127,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      {user==null ? (
+      {!isLoggedIn ? (
     [
       <NavLink to='/login' className='navlink'> <MenuItem>Login</MenuItem></NavLink>,
       <NavLink to='/register' className='navlink'> <MenuItem>Register</MenuItem></NavLink>
     ]
   ) : (
     [
-      <MenuItem key="profile" onClick={() => setToggleDrawer(!toggleDrawer)}>Profile</MenuItem>,
-      <MenuItem key="account" onClick={handleMenuClose}>My account</MenuItem>,
+      <MenuItem key="profile" onClick={() => setToggleDrawer(!toggleDrawer)}>My Profile</MenuItem>,
       <MenuItem key="logout" onClick={logout}>Logout</MenuItem>
 
     ]

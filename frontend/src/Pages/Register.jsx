@@ -126,7 +126,8 @@ const Register = () => {
         phone: userDetails.phone,
         promotion: userDetails.promotion,
         avatar:imgUrl,
-        blocked: []
+        blocked: [],
+        lastSeen:Date.now()
       });
   
       await setDoc(doc(db, 'userchats', result.user.uid), {

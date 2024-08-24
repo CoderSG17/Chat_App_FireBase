@@ -10,15 +10,19 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import { useState } from 'react';
 import { ImCross } from "react-icons/im";
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../Context/Auth';
 
-export default function ChatBubble({ text, createdAt, image, caption ,senderId}) {
-  const {userData} = useAuth()
+export default function ChatBubble({ elem , createdAt}) {
+  const { text, img, caption, senderId, audioUrl , videoUrl } = elem;
+
+  // const videoUrl =''
+  const { userData } = useAuth()
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const handleImageClick = () => {
     setIsImageModalOpen(true);
   };
-  const isSent = senderId===userData.id ? true : false;
+  const isSent = senderId === userData.id ? true : false;
+
   return (
     <>
       <Box sx={{
@@ -44,39 +48,54 @@ export default function ChatBubble({ text, createdAt, image, caption ,senderId})
             }}
           >
 
-            {image || caption ? <><Typography
-              level="body-sm"
-              sx={{
-                color:"black",
-                textAlign: "left",
-                marginRight: "40px"
-
-              }}
-            >
-              <img src={image} alt="error" className='image' onClick={handleImageClick} />
-              {isImageModalOpen && (
-                <div className="image-modal">
-                  <button className="close-button" onClick={() => setIsImageModalOpen(false)}><ImCross /></button>
-                  <img src={image} alt="error" className="image-modal-content" />
-                </div>
-              )}
-            </Typography>
-              <Typography sx={{ color: !isSent ? "black" : "white", textAlign: "left", fontSize: "16px" }}>{caption}</Typography>
-            </>
-              : <Typography
+            {img || caption || audioUrl || videoUrl ? (
+              <>
+                {img && (
+                  <Typography
+                    level="body-sm"
+                    sx={{
+                      color: "black",
+                      textAlign: "left",
+                      marginRight: "40px"
+                    }}
+                  >
+                    <img src={img} alt="error" className="image" onClick={handleImageClick} />
+                    {isImageModalOpen && (
+                      <div className="image-modal">
+                        <button className="close-button" onClick={() => setIsImageModalOpen(false)}><ImCross /></button>
+                        <img src={img} alt="error" className="image-modal-content" />
+                      </div>
+                    )}
+                  </Typography>
+                )}
+                {caption && (
+                  <Typography sx={{ color: !isSent ? "black" : "white", textAlign: "left", fontSize: "16px" }}>
+                    {caption}
+                  </Typography>
+                )}
+                {audioUrl && (
+                  <audio src={audioUrl} controls />
+                )}
+                {videoUrl && (
+                  <video src={videoUrl} controls style={{ maxWidth: "100%", maxHeight: "300px" }} />
+                )}
+              </>
+            ) : (
+              <Typography
                 level="body-sm"
                 sx={{
-                  color: isSent
-                    ? 'var(--joy-palette-common-white)'
-                    : 'var(--joy-palette-text-primary)',
+                  color: isSent ? 'var(--joy-palette-common-white)' : 'var(--joy-palette-text-primary)',
                   textAlign: "left",
-                  marginRight: "40px"
-
+                  marginRight: "40px",
+                  whiteSpace: 'pre-wrap',
+                  
                 }}
               >
                 {text}
-              </Typography>}
-            <Typography sx={{textAlign: "right", fontSize: "10px" , color: !isSent ? "black" : "white" }}>{createdAt}</Typography>
+              </Typography>
+            )}
+
+            <Typography sx={{ textAlign: "right", fontSize: "10px", color: !isSent ? "black" : "white" }}>{createdAt}</Typography>
           </Sheet>
         </Stack>
       </Box>

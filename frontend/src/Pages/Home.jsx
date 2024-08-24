@@ -26,11 +26,15 @@ import Sidebar from '../ChatComponents/Sidebar';
 import Header from '../ChatComponents/Header';
 import MyMessages from '../ChatComponents/MyMessages';
 import Navbar from '../components/Navbar';
+import { useAuth } from '../Context/Auth';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
+  const {isLoggedIn} = useAuth()
+  const navigate = useNavigate()
   return (
     <>
-    <Navbar ></Navbar>
+   {isLoggedIn ?<>  <Navbar ></Navbar>
     <br /><br /><br />
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
@@ -41,7 +45,7 @@ export default function Home() {
           <MyMessages />
         </Box>
       </Box>
-    </CssVarsProvider>
+    </CssVarsProvider></>:navigate('/login')}
     </>
   );
 }

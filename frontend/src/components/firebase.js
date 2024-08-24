@@ -10,6 +10,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 
 const auth = getAuth(firebaseApp); // For Authentication
 const db = getFirestore(firebaseApp); // For Using Database
-const storage = getStorage(); // For Using Database
+const storage = getStorage(); // For Using Storage
+const firestore = getFirestore(firebaseApp);
 
-export { auth, db ,storage};
+export { auth, db ,storage,firestore};

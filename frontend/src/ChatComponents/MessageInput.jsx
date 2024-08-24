@@ -5,24 +5,26 @@ import FormControl from '@mui/joy/FormControl';
 import Textarea from '@mui/joy/Textarea';
 import { IconButton, Stack } from '@mui/joy';
 import upload from '../components/upload';
-import FormatBoldRoundedIcon from '@mui/icons-material/FormatBoldRounded';
-import FormatItalicRoundedIcon from '@mui/icons-material/FormatItalicRounded';
-import StrikethroughSRoundedIcon from '@mui/icons-material/StrikethroughSRounded';
-import FormatListBulletedRoundedIcon from '@mui/icons-material/FormatListBulletedRounded';
+
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import EmojiPicker from "emoji-picker-react"
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../Context/Auth';
 import { arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../components/firebase';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
+import VoiceMessage from '../components/VoiceMessage';
+import VideoMessage from '../components/VideoMessage';
+import { ImCross } from 'react-icons/im';
+import SpeechToText from '../components/SpeechToText';
+import Styling from '../components/Styling';
+import { useTextStyle } from '../Context/StylingContext';
 
 export default function MessageInput() {
-  const { chatId, userData, funUser } = useAuth();
+  const { chatId, userData, funUser ,isReceiverBlocked,isCurrUserBlocked} = useAuth();
   const emojiRef = useRef(null);
   const buttonRef = useRef(null);
   const [text, setText] = useState("");
@@ -34,6 +36,8 @@ export default function MessageInput() {
     file:null,
     url:""
   })
+
+  const { textStyle } = useTextStyle(); 
 
   const handleSend = async () => {
     console.log(chatId)
@@ -122,7 +126,7 @@ export default function MessageInput() {
         url
       });
 
-      setShowCaptionModal(true); // Show the caption input modal
+      setShowCaptionModal(true); 
       setSelectedImage(file);
     }
   };
@@ -133,11 +137,11 @@ export default function MessageInput() {
     try {
       let imgUrl = null;
       if (selectedImage) {
-        imgUrl = await upload(selectedImage); // Your upload function
+        imgUrl = await upload(selectedImage); 
         console.log(imgUrl);
       }
 
-      // Store image and caption in the chat
+    
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({
           senderId: userData.id,
@@ -147,7 +151,6 @@ export default function MessageInput() {
         }),
       });
 
-      // Update the user chats as you did before
       const userIds = [userData.id, funUser.id];
       userIds.forEach(async (id) => {
         const userChatRef = doc(db, "userchats", id);
@@ -159,7 +162,8 @@ export default function MessageInput() {
           const chatIdx = userChatData.chats.findIndex(c => c.chatId === chatId);
 
           if (chatIdx !== -1) {
-            userChatData.chats[chatIdx].lastMessage = caption ? "📷 " + caption : "Image 📷";
+            userChatData.chats[chatIdx].lastMessage = image ? (caption ? "📷 " + caption : "Image 📷") : ""
+
             userChatData.chats[chatIdx].isSeen = id === userData.id ? true : false;
             userChatData.chats[chatIdx].updatedAt = Date.now();
 
@@ -176,8 +180,8 @@ export default function MessageInput() {
         }
       });
 
-      setCaption(""); // Clear the caption input
-      setShowCaptionModal(false); // Hide the modal
+      setCaption(""); 
+      setShowCaptionModal(false); 
     } catch (error) {
       console.log(error);
       setText("");
@@ -193,14 +197,15 @@ export default function MessageInput() {
 
   return (
     <Box sx={{ px: 2, pb: 3 }}>
-      <FormControl>
-        <Textarea
-          placeholder="Type something here…"
+      <FormControl sx={{ cursor: isCurrUserBlocked || isReceiverBlocked ? 'not-allowed':'pointer' }} >  
+        <Textarea   
+          placeholder={isCurrUserBlocked || isReceiverBlocked ?"You cannot send any message":"Type something here…"}
           aria-label="Message"
           onChange={(e) => {
             setText(e.target.value);
+            
           }}
-
+          disabled={isCurrUserBlocked||isReceiverBlocked}
           value={text}
           minRows={3}
           maxRows={10}
@@ -221,7 +226,9 @@ export default function MessageInput() {
                 <span>
                   {toggleEmoji && (
                     <div ref={emojiRef}>
-                      <EmojiPicker onEmojiClick={handleEmoji} />
+                      <EmojiPicker onEmojiClick={handleEmoji}                  
+                      disabled={isCurrUserBlocked||isReceiverBlocked}
+                      />
                     </div>
                   )}
                   <span ref={buttonRef}>
@@ -230,47 +237,46 @@ export default function MessageInput() {
                       variant="plain"
                       color="neutral"
                       onClick={() => setToggleEmoji(!toggleEmoji)}
+                       title='Emoji'
                     >
                       <EmojiEmotionsIcon />
                     </IconButton>
                   </span>
                 </span>
-                <IconButton size="sm" variant="plain" color="neutral">
+                <IconButton size="sm" variant="plain" color="neutral" title='Photo'>
                   <label htmlFor="file">
                     <CameraAltIcon />
                   </label>
-                  <input type="file" id='file' accept="image/*" style={{ display: "none" }} onChange={handleImage} />
+                  <input type="file" id='file' accept="image/*" style={{ display: "none" }} onChange={handleImage}                
+                   disabled={isCurrUserBlocked||isReceiverBlocked}
+                  />
                 </IconButton>
                 {showCaptionModal && (
                   <div className="caption-modal">
+                  <button className="close-button" onClick={() => setShowCaptionModal(false)}><ImCross /></button>
+
                     <div className="modal-content">
-                    <img src={image?.url} alt="" className='image' /><br /><br />
+                    <img src={image?.url} alt="error" className='image' /><br /><br />
                       <input
                         type="text"
                         placeholder="Enter caption"
                         value={caption}
                         onChange={(e) => setCaption(e.target.value)}
+                        disabled={isCurrUserBlocked||isReceiverBlocked}
+
                       />
-                      <button onClick={handleSendImage}>Send</button>
-                      <button onClick={handleSendImage}>Cancel</button>
+                      <button onClick={handleSendImage}                 disabled={isCurrUserBlocked||isReceiverBlocked}
+>Send</button>
+                      <button onClick={handleSendImage}                 
+>Send Without Caption</button>
                     </div>
                   </div>
                 )}
-                <IconButton size="sm" variant="plain" color="neutral">
-                  <KeyboardVoiceIcon />
-                </IconButton>
-                <IconButton size="sm" variant="plain" color="neutral">
-                  <FormatBoldRoundedIcon />
-                </IconButton>
-                <IconButton size="sm" variant="plain" color="neutral">
-                  <FormatItalicRoundedIcon />
-                </IconButton>
-                <IconButton size="sm" variant="plain" color="neutral">
-                  <StrikethroughSRoundedIcon />
-                </IconButton>
-                <IconButton size="sm" variant="plain" color="neutral">
-                  <FormatListBulletedRoundedIcon />
-                </IconButton>
+                <VoiceMessage></VoiceMessage>
+                <VideoMessage></VideoMessage>
+                <SpeechToText text={text} setText={setText}></SpeechToText>
+                <Styling></Styling>
+               
               </div>
               <Button
                 size="sm"
@@ -278,19 +284,24 @@ export default function MessageInput() {
                 sx={{ alignSelf: 'center', borderRadius: 'sm' }}
                 endDecorator={<SendRoundedIcon />}
                 onClick={handleSend}
+                disabled={isCurrUserBlocked||isReceiverBlocked}
               >
                 Send
               </Button>
             </Stack>
           }
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
-              handleSend();
-            }
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Prevents the default Enter behavior (new line)
+      handleSend();
+    }
           }}
           sx={{
             '& textarea:first-of-type': {
               minHeight: 72,
+              fontWeight: textStyle.isBold ? 'bold' : 'normal',
+          fontStyle: textStyle.isItalic ? 'italic' : 'normal',
+          textDecoration: textStyle.isStrikeThrough ? 'line-through' : 'none'
             },
           }}
         />

@@ -8,7 +8,7 @@ import MessageInput from './MessageInput';
 import MessagesPaneHeader from './MessagesPaneHeader';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../components/firebase';
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../Context/Auth';
 import Entry from '../Pages/Entry';
 
 export default function MessagesPane({ selectedChat }) {
@@ -41,6 +41,8 @@ export default function MessagesPane({ selectedChat }) {
 
 
   return (
+    <>
+
     <Sheet
       sx={{
         height: { xs: 'calc(100dvh - var(--Header-height))', lg: '100dvh' },
@@ -50,7 +52,7 @@ export default function MessagesPane({ selectedChat }) {
       }}
     >
       {chatMessages.length === 0 ? "" : <MessagesPaneHeader />}
-      <Box
+      {chatMessages.length === 0 ? <Entry></Entry> : <><Box
         sx={{
           display: 'flex',
           flex: 1,
@@ -69,8 +71,8 @@ export default function MessagesPane({ selectedChat }) {
             const timestampInSeconds = elem.createdAt.seconds;
             const date = new Date(timestampInSeconds * 1000); // Convert seconds to milliseconds
 
-            let hours = date.getHours(); // Use getHours() for local time
-            const minutes = date.getMinutes(); // Use getMinutes() for local time
+            let hours = date.getHours(); 
+            const minutes = date.getMinutes(); 
 
             const timeLine = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12; // Convert to 12-hour format
@@ -95,13 +97,15 @@ export default function MessagesPane({ selectedChat }) {
                     src={messages?.sender.avatar || error}
                   />
                 )} */}
-                <ChatBubble text={elem.text} createdAt={formattedTime} image={elem.img?elem.img:""} caption={elem.caption?elem.caption:""} senderId={elem.senderId}></ChatBubble>
+                <ChatBubble elem={elem} createdAt={formattedTime}></ChatBubble>
               </Stack>
             );
           }) : ""}
         </Stack>
       </Box>
-      {chatMessages.length === 0 ? <Entry></Entry> : <MessageInput></MessageInput>}
+      <MessageInput></MessageInput>
+      </>}
     </Sheet>
+    </>
   );
 }

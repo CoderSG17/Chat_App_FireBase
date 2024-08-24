@@ -34,7 +34,7 @@ import ColorSchemeToggle from './ColorSchemeToggle';
 import { closeSidebar } from "../../utils";
 import { useState } from 'react';
 import AddUser from '../components/AddUser';
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../Context/Auth';
 import { signOut } from "firebase/auth";
 import { toast } from 'react-toastify';
 import { auth } from '../components/firebase';
@@ -70,8 +70,10 @@ function Toggler(props: {
 }
 
 export default function Sidebar() {
-
+  
   const [showAddUser, setShowAddUser] = useState(false);
+  const brightnessLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
+  const [currentLevel, setCurrentLevel] = useState(4); 
   const {userData} =useAuth()
   const navigate = useNavigate();
 
@@ -83,6 +85,17 @@ export default function Sidebar() {
       navigate("/login")
     },2000)
   };
+
+  
+
+  const handleBrightnessToggle = () => {
+    // Cycle to the next brightness level
+    const nextLevel = (currentLevel + 1) % brightnessLevels.length;
+    setCurrentLevel(nextLevel);
+    document.body.style.filter = `brightness(${brightnessLevels[nextLevel]})`;
+    toast.success(`Brightness set to ${brightnessLevels[nextLevel] *100 + "%"} `)
+  };
+  
 
   return (
     <>
@@ -138,13 +151,13 @@ export default function Sidebar() {
         onClick={() => closeSidebar()}
       />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <IconButton variant="soft" color="primary" size="sm">
+        <IconButton variant="soft" color="primary" size="sm" onClick={handleBrightnessToggle}>
           <BrightnessAutoRoundedIcon />
         </IconButton>
-        <Typography level="title-lg">Acme Co.</Typography>
+        <Typography level="title-lg">Chat App</Typography>
         <ColorSchemeToggle sx={{ ml: 'auto' }} />
       </Box>
-      <Input size="sm" startDecorator={<SearchRoundedIcon />} placeholder="Search" />
+      {/* <Input size="sm" startDecorator={<SearchRoundedIcon />} placeholder="Search" /> */}
       <Box
         sx={{
           minHeight: 0,
