@@ -50,6 +50,11 @@ export default function MessageInput() {
         messages: arrayUnion({
           senderId: userData.id,
           text,
+          textStyles:{
+            isBold : textStyle.isBold,
+            isItalic : textStyle.isItalic,
+            isStrikeThrough : textStyle.isStrikeThrough,
+          },
           createdAt: new Date(),
         })
       })
@@ -67,7 +72,6 @@ export default function MessageInput() {
           console.log(userChatData)
 
           const chatIdx = userChatData.chats.findIndex(c => c.chatId === chatId)
-          console.log(chatIdx)
 
           userChatData.chats[chatIdx].lastMessage = text;
           userChatData.chats[chatIdx].isSeen = id === userData.id ? true : false;
@@ -78,7 +82,9 @@ export default function MessageInput() {
           })
 
           setText("")
-
+          textStyle.isBold = false;
+          textStyle.isItalic = false
+          textStyle.isStrikeThrough = false
 
         }
       })
@@ -87,6 +93,9 @@ export default function MessageInput() {
     } catch (error) {
       console.log(error)
       setText("")
+      textStyle.isBold = false;
+      textStyle.isItalic = false
+      textStyle.isStrikeThrough = false
 
     }
   };

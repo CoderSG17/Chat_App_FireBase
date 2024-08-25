@@ -65,7 +65,7 @@ export default function MessagesPane({ selectedChat }) {
       >
         <Stack spacing={2} justifyContent="flex-end"
         >
-          {chatMessages.messages ? chatMessages.messages.map((elem, index) => {
+          {chatMessages.messages ? chatMessages.messages.map((elem, idx) => {
             const isSent = elem.senderId===userData.id ? true : false;
 
             const timestampInSeconds = elem.createdAt.seconds;
@@ -86,7 +86,7 @@ export default function MessagesPane({ selectedChat }) {
 
             return (
               <Stack
-                key={index}
+                key={idx}
                 direction="row"
                 spacing={2}
                 flexDirection={isSent?'row-reverse':'reverse'}
@@ -97,7 +97,7 @@ export default function MessagesPane({ selectedChat }) {
                     src={messages?.sender.avatar || error}
                   />
                 )} */}
-                <ChatBubble elem={elem} createdAt={formattedTime}></ChatBubble>
+                <ChatBubble elem={elem} createdAt={formattedTime} idx={idx}></ChatBubble>
               </Stack>
             );
           }) : ""}

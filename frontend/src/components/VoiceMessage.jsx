@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useAuth } from '../Context/Auth';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const VoiceMessage = () => {
   const { chatId, userData ,funUser} = useAuth()
@@ -80,6 +81,7 @@ const VoiceMessage = () => {
       if (audioUrl) {
         await handleUpload(audioUrl);
       } else {
+        toast.error("Some error occured !! Try again")
         console.error('No mediaBlobUrl available.');
       }
     }, 2000)
@@ -91,7 +93,7 @@ const VoiceMessage = () => {
     if (mediaBlobUrl) {
       setAudioUrl(mediaBlobUrl);
     }
-  }, [mediaBlobUrl,audioUrl]);
+  }, [mediaBlobUrl,audioUrl,status]);
 
 
   return (

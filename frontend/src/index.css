@@ -340,3 +340,53 @@ body{
   bottom: 2px;
 }
 
+.hover_icon{
+  visibility: hidden;
+}
+
+.hover_ctn:hover .hover_icon{
+  visibility: visible;
+
+}
+
+
+
+
+.dropdown-content {
+width: fit-content;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2); 
+  backdrop-filter: blur(8px); 
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 1;
+  top: 15px; 
+  right: -15px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding:5px 3px;
+  text-decoration: none;
+  display: block;
+  font-size: 13px;
+}
+
+.dropdown-content a:hover {
+  background-color: rgba(0, 0, 0, 0.1); 
+  color: white;
+}
+
+.dropdown-container:hover .dropdown-content {
+  display: block;
+}
+.btn3{
+  color: black;
+  text-decoration: none;
+  display: block;
+  font-size: 13px;
+  width: 100%;
+  border: none;
+  background: none;
+  
+}

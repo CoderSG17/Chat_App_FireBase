@@ -11,13 +11,15 @@ import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRound
 import { useState } from 'react';
 import { ImCross } from "react-icons/im";
 import { useAuth } from '../Context/Auth';
+import { MdOutlineKeyboardArrowDown } from "react-icons/md";
+import TextOptions from '../components/TextOptions';
 
-export default function ChatBubble({ elem , createdAt}) {
-  const { text, img, caption, senderId, audioUrl , videoUrl } = elem;
+export default function ChatBubble({ elem , createdAt,idx}) {
+  const { text, img, caption, senderId, audioUrl , videoUrl , textStyles} = elem;
 
-  // const videoUrl =''
   const { userData } = useAuth()
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [showOptions,setShowOptions]= useState(false)
   const handleImageClick = () => {
     setIsImageModalOpen(true);
   };
@@ -46,8 +48,13 @@ export default function ChatBubble({ elem , createdAt}) {
                 ? 'var(--joy-palette-primary-solidBg)'
                 : 'background.body',
             }}
+            className="hover_ctn"
           >
-
+  <MdOutlineKeyboardArrowDown style={{position:"absolute" ,  right:"0" , top:"0"}} className='hover_icon' onClick={()=>setShowOptions(!showOptions)}></MdOutlineKeyboardArrowDown>
+          
+          {
+            showOptions?<TextOptions setShowOptions={setShowOptions} showOptions={showOptions} txt={text} senderId ={senderId} idx={idx}></TextOptions>:""
+          }
             {img || caption || audioUrl || videoUrl ? (
               <>
                 {img && (
@@ -88,7 +95,9 @@ export default function ChatBubble({ elem , createdAt}) {
                   textAlign: "left",
                   marginRight: "40px",
                   whiteSpace: 'pre-wrap',
-                  
+                  fontWeight:textStyles?.isBold ?"bold":"",
+                  textDecoration:textStyles?.isStrikeThrough ? "line-through" : "",
+                  fontStyle:textStyles?.isItalic?"italic":""
                 }}
               >
                 {text}

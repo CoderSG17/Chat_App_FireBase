@@ -19,7 +19,7 @@ const SpeechToText = ({setText}) => {
     const startListening  =()=> SpeechRecognition.startListening({ continuous: true , language: 'en-IN' })
 
 
-    const stopListening =async()=> {
+    const stopListening =async()=> {  
         SpeechRecognition.stopListening()
         setText("")
         try {

@@ -95,7 +95,7 @@ const VideoMessage = () => {
     if (mediaBlobUrl) {
       setvideoUrl(mediaBlobUrl);
     }
-  }, [mediaBlobUrl ,videoUrl]);
+  }, [mediaBlobUrl ,videoUrl,status]);
 
 
   return (
