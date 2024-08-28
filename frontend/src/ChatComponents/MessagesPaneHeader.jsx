@@ -15,9 +15,12 @@ import { useState } from 'react';
 import { arrayRemove, arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../components/firebase';
 import { RxAvatar } from "react-icons/rx";
+import VideoCallIcon from '@mui/icons-material/VideoCall';
+import MediaDrawer from "../components/MediaDrawer"
 
 export default function MessagesPaneHeader() {
   const [open, setOpen] = useState();
+  const [showMedia, setShowMedia] = useState();
   const openRef = React.useRef(null);
   const { funUser, chatId, isReceiverBlocked, isCurrUserBlocked, changeBlockStatus, userData } = useAuth()
   console.log(funUser)
@@ -54,6 +57,7 @@ export default function MessagesPaneHeader() {
 
 
   return (
+    <>
     <Stack
       direction="row"
       justifyContent="space-between"
@@ -118,9 +122,10 @@ export default function MessagesPaneHeader() {
             display: { xs: 'none', md: 'inline-flex' },
           }}
         >
-          Call
+          Audio Call
         </Button>
         <Button
+          startDecorator={<VideoCallIcon />}
           color="neutral"
           variant="outlined"
           size="sm"
@@ -128,17 +133,25 @@ export default function MessagesPaneHeader() {
             display: { xs: 'none', md: 'inline-flex' },
           }}
         >
-          View profile
+          Video Call
         </Button>
+       
         <IconButton size="sm" variant="plain" color="neutral" onClick={() => setOpen(!open)}>
           <MoreVertRoundedIcon />
         </IconButton>
         {open ?
           <div className='button-container' ref={openRef}>
+        
+
+            <button className='btn2' style={{backgroundColor:"blue"}} onClick={()=>{setShowMedia(!showMedia)
+            setOpen(false)}}>Media</button>
+          
             <button className='btn2' onClick={handleBlock}>{isCurrUserBlocked ? "You are blocked!!" : isReceiverBlocked ? "User Blocked!!" : "Block User"}</button>
           </div>
           : ""}
       </Stack>
     </Stack>
+    {showMedia && <MediaDrawer onClose={() => setShowMedia(false)} />}
+      </>
   );
 }

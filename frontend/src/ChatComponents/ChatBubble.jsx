@@ -53,7 +53,7 @@ export default function ChatBubble({ elem , createdAt,idx}) {
   <MdOutlineKeyboardArrowDown style={{position:"absolute" ,  right:"0" , top:"0"}} className='hover_icon' onClick={()=>setShowOptions(!showOptions)}></MdOutlineKeyboardArrowDown>
           
           {
-            showOptions?<TextOptions setShowOptions={setShowOptions} showOptions={showOptions} txt={text} senderId ={senderId} idx={idx}></TextOptions>:""
+            showOptions?<TextOptions setShowOptions={setShowOptions} showOptions={showOptions} txt={text} senderId ={senderId} idx={idx} elem={elem}></TextOptions>:""
           }
             {img || caption || audioUrl || videoUrl ? (
               <>

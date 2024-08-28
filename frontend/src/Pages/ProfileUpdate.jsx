@@ -71,6 +71,42 @@ const ProfileUpdate = () => {
             if(profileDet.file){
             imgUrl = await upload(profileDet.file)
             }
+
+            if (!profileDet.url) {
+              toast.error("Image is required");
+              return;
+            }
+      
+            if (!profileDet.name) {
+              toast.error("Name is required");
+              return;
+            } else if (profileDet.name.length < 3) {
+              toast.error("Name should be at least 3 characters long");
+              return;
+            }
+      
+      
+            if (!profileDet.about) {
+             toast.error("About is required")
+             return;
+            }
+            else if((profileDet.about.length < 2)){
+              toast.error("About should be at least 2 characters long");
+              return;
+            }
+      
+            const phoneRegex = /^[6-9]\d{9}$/;
+      
+            if (!profileDet.phone) {
+             toast.error("Phone Number is required")
+             return
+            }
+            else if (!phoneRegex.test(profileDet.phone)) {
+              toast.error("Phone No. should be exactly 10 digits long and start with 6, 7, 8, or 9");
+              return;
+            }
+
+            
             await updateDoc(docRef,{
                     avatar:imgUrl?imgUrl:profileDet.avatar,
                     name:profileDet.name,

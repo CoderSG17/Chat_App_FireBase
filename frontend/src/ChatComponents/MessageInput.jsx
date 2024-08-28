@@ -276,8 +276,8 @@ export default function MessageInput() {
                       />
                       <button onClick={handleSendImage}                 disabled={isCurrUserBlocked||isReceiverBlocked}
 >Send</button>
-                      <button onClick={handleSendImage}                 
->Send Without Caption</button>
+                      {/* <button onClick={handleSendImage}                 
+>Send Without Caption</button> */}
                     </div>
                   </div>
                 )}
@@ -285,7 +285,7 @@ export default function MessageInput() {
                 <VideoMessage></VideoMessage>
                 <SpeechToText text={text} setText={setText}></SpeechToText>
                 <Styling></Styling>
-               
+            
               </div>
               <Button
                 size="sm"

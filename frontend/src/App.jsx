@@ -4,7 +4,6 @@ import Login from './Pages/Login'
 import Register from './Pages/Register'
 import Home from './Pages/Home'
 import ProfileUpdate from './Pages/ProfileUpdate'
-
 const App = () => {
 
   // // const socket = io('http://localhost:5000')
@@ -33,6 +32,7 @@ const App = () => {
           </Route>
           <Route path='/updateProfile' element={<ProfileUpdate></ProfileUpdate>}>
           </Route>
+          
         </Routes>
       </BrowserRouter>
     </>

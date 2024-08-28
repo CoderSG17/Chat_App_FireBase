@@ -93,7 +93,7 @@ const VoiceMessage = () => {
     if (mediaBlobUrl) {
       setAudioUrl(mediaBlobUrl);
     }
-  }, [mediaBlobUrl,audioUrl,status]);
+  }, [mediaBlobUrl,status]);
 
 
   return (
