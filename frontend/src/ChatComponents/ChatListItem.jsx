@@ -11,10 +11,13 @@ import { toggleMessagesPane } from '../../utils';
 import { useAuth } from '../Context/Auth';
 import { db } from '../components/firebase';
 import { doc , updateDoc } from 'firebase/firestore';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 
 export default function ChatListItem({chat, setSelectedChat ,selectedChat,allChats}) {
   const {changeChat,userData} = useAuth()
+  const [timeAgo, setTimeAgo] = useState('0 minutes ago');
 
   // console.log(chat)
   // console.log(allChats)
@@ -49,6 +52,39 @@ export default function ChatListItem({chat, setSelectedChat ,selectedChat,allCha
     setSelectedChat(chat.chatId); 
   }
 
+
+  const calculateTimeAgo = (timestamp) => {
+    const now = Date.now();
+    const timeDifference = now - timestamp;
+
+
+    const minutes = Math.floor(timeDifference / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+ if (minutes < 60) {
+      setTimeAgo(`${minutes} mins ago`);
+    } else if (hours < 24) {
+      setTimeAgo(`${hours} hrs ago`);
+    } else if (days < 30) {
+      setTimeAgo(`${days} days ago`);
+    } else {
+      setTimeAgo('Long time ago');
+    }
+  };
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      calculateTimeAgo(chat.updatedAt);
+    }, 60000); //every min 
+
+    calculateTimeAgo(chat.updatedAt);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
   return (
     <React.Fragment>
       <ListItem>
@@ -81,7 +117,7 @@ export default function ChatListItem({chat, setSelectedChat ,selectedChat,allCha
                 display={{ xs: 'none', md: 'block' }}
                 noWrap
               >
-                5 mins ago
+                {timeAgo}
               </Typography>
             </Box>
           </Stack>

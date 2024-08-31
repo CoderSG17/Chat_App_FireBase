@@ -27,7 +27,7 @@ export default function Header() {
       <GlobalStyles
         styles={(theme) => ({
           ':root': {
-            '--Header-height': '52px',
+            // '--Header-height': '52px',
             [theme.breakpoints.up('lg')]: {
               '--Header-height': '0px',
             },

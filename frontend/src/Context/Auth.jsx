@@ -5,8 +5,7 @@ export const AuthContext = createContext();
 import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 
 export const AuthProvider = ({ children }) => {
-
-  console.log(auth)
+    const [isLoading , setIsloading ] = useState(false)
     const [user,setUser] = useState()
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const[userData , setUserData] = useState()
@@ -87,7 +86,7 @@ export const AuthProvider = ({ children }) => {
                   lastSeen:Date.now(),
                 })
               }
-            },60000)
+            },10000)
           } else {
             console.log("No such document found!");
           }
@@ -134,7 +133,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
     
     return (
-        <AuthContext.Provider value={{ user,userData , changeChat , chatId,changeBlockStatus , funUser,allUser,isCurrUserBlocked,isReceiverBlocked , isLoggedIn}}>
+        <AuthContext.Provider value={{ user,userData , changeChat , chatId,changeBlockStatus , funUser,allUser,isCurrUserBlocked,isReceiverBlocked , isLoggedIn ,isLoading , setIsloading}}>
           {children}
         </AuthContext.Provider>
       );

@@ -81,7 +81,9 @@ const SpeechToText = ({setText}) => {
   return (
     <>
     <IconButton onClick={!listening ? startListening:stopListening}
-    title={!listening ? 'Speech To Text':'Stop speaking'}>
+    title={!listening ? 'Speech To Text':'Stop speaking'}
+    sx={{paddingRight:"9px"}}
+    >
        {listening ? <i class="fa-solid fa-ear-listen fa-fade icn" style={{bottom:"4px"}} ></i> : <SpeakerNotesIcon/>}
     </IconButton>
     </>

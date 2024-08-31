@@ -13,16 +13,37 @@ import { ImCross } from "react-icons/im";
 import { useAuth } from '../Context/Auth';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import TextOptions from '../components/TextOptions';
+import { useRef } from 'react';
+import { useEffect } from 'react';
+import DownloadIcon from '@mui/icons-material/Download';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
-export default function ChatBubble({ elem , createdAt,idx}) {
-  const { text, img, caption, senderId, audioUrl , videoUrl , textStyles} = elem;
+export default function ChatBubble({ elem, createdAt, idx }) {
+  const { text, img, caption, senderId, audioUrl, videoUrl, textStyles, pdfUrl ,fileName} = elem;
 
   const { userData } = useAuth()
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-  const [showOptions,setShowOptions]= useState(false)
+  const [showOptions, setShowOptions] = useState(false)
+  const optionsRef = useRef(null);
+
   const handleImageClick = () => {
     setIsImageModalOpen(true);
   };
+
+  const handleClickOutside = (e) => {
+    if (optionsRef.current && !optionsRef.current.contains(e.target)) {
+      setShowOptions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
   const isSent = senderId === userData.id ? true : false;
 
   return (
@@ -50,12 +71,12 @@ export default function ChatBubble({ elem , createdAt,idx}) {
             }}
             className="hover_ctn"
           >
-  <MdOutlineKeyboardArrowDown style={{position:"absolute" ,  right:"0" , top:"0"}} className='hover_icon' onClick={()=>setShowOptions(!showOptions)}></MdOutlineKeyboardArrowDown>
-          
-          {
-            showOptions?<TextOptions setShowOptions={setShowOptions} showOptions={showOptions} txt={text} senderId ={senderId} idx={idx} elem={elem}></TextOptions>:""
-          }
-            {img || caption || audioUrl || videoUrl ? (
+            <MdOutlineKeyboardArrowDown style={{ position: "absolute", right: "0", top: "0" }} className='hover_icon' onClick={() => setShowOptions(!showOptions)}></MdOutlineKeyboardArrowDown>
+
+            {
+              showOptions ? <div ref={optionsRef}><TextOptions setShowOptions={setShowOptions} showOptions={showOptions} txt={text} senderId={senderId} idx={idx} elem={elem} ></TextOptions></div> : ""
+            }
+            {img || caption || audioUrl || videoUrl || pdfUrl ? (
               <>
                 {img && (
                   <Typography
@@ -86,6 +107,18 @@ export default function ChatBubble({ elem , createdAt,idx}) {
                 {videoUrl && (
                   <video src={videoUrl} controls style={{ maxWidth: "100%", maxHeight: "300px" }} />
                 )}
+                {pdfUrl && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' , justifyContent:"center" ,cursor: 'pointer' }}  onClick={() => window.open(pdfUrl, '_blank')}>
+                    <>
+                      <PictureAsPdfIcon style={{ cursor: 'pointer' , fontSize:"35px" }} />
+                    </>
+                    <Typography variant="body2" component="span" style={{ marginRight: '8px' , color:"white" }}>
+                     {fileName}
+                    </Typography>
+              
+                  </div>
+
+                )}
               </>
             ) : (
               <Typography
@@ -95,9 +128,9 @@ export default function ChatBubble({ elem , createdAt,idx}) {
                   textAlign: "left",
                   marginRight: "40px",
                   whiteSpace: 'pre-wrap',
-                  fontWeight:textStyles?.isBold ?"bold":"",
-                  textDecoration:textStyles?.isStrikeThrough ? "line-through" : "",
-                  fontStyle:textStyles?.isItalic?"italic":""
+                  fontWeight: textStyles?.isBold ? "bold" : "",
+                  textDecoration: textStyles?.isStrikeThrough ? "line-through" : "",
+                  fontStyle: textStyles?.isItalic ? "italic" : ""
                 }}
               >
                 {text}

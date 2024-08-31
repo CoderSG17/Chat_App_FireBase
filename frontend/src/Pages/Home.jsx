@@ -41,8 +41,8 @@ export default function Home() {
       <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
         <Sidebar />
         <Header />
-        <Box component="main" className="MainContent" sx={{ flex: 1 }}>
-          <MyMessages />
+        <Box component="main" className="MainContent" sx={{ flex: 1,minHeight: '100dvh'}}>
+          <MyMessages/>
         </Box>
       </Box>
     </CssVarsProvider></>:navigate('/login')}

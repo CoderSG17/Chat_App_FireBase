@@ -85,7 +85,7 @@ function MediaDrawer({ onClose }) {
         ) : (
           filteredMessages.map(elem => (
             <div key={elem.id} className="media-item">
-              {filter === 'image' && elem.img && <img className='img1' src={elem.img} alt="media" />}
+              {filter === 'image' && elem.img && <img onClick={()=>window.open(elem.img)} className='img1' src={elem.img} alt="media" />}
               {filter === 'audio' && elem.audioUrl && <audio controls src={elem.audioUrl} />}
               {filter === 'video' && elem.videoUrl && <video controls src={elem.videoUrl} />}
             </div>

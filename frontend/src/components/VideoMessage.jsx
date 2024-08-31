@@ -10,9 +10,10 @@ import { useAuth } from '../Context/Auth';
 import { useEffect } from 'react';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import {toast} from 'react-toastify';
+import Loader from './Loader';
 
 const VideoMessage = () => {
-  const { chatId, userData,funUser } = useAuth()
+  const { chatId, userData,funUser,isLoading , setIsloading } = useAuth()
   const [videoUrl, setvideoUrl] = useState('');
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -64,6 +65,7 @@ const VideoMessage = () => {
 
   const handleUpload = async (url) => {
     try {
+      setIsloading(true)
       const response = await fetch(url);
       const blob = await response.blob();
       const videoRef = ref(storage, `video/${Date.now()}.webm`);
@@ -74,10 +76,15 @@ const VideoMessage = () => {
     } catch (error) {
       console.error('Error uploading audio:', error);
     }
+    finally {
+      setIsloading(false)
+    }
   };
 
   const handleStop = async () => {
     console.log('Stopping recording...');
+    try {
+      setIsloading(true)
     stopRecording();
     setTimeout( () => {
       if (videoUrl) {
@@ -87,6 +94,13 @@ const VideoMessage = () => {
         console.error('No mediaBlobUrl available.');
       }
     }, 2000)
+  }
+  catch (error) {
+    console.error('Error uploading audio:', error);
+  }
+  finally {
+    setIsloading(false)
+  }
   };
 
 
@@ -95,7 +109,7 @@ const VideoMessage = () => {
     if (mediaBlobUrl) {
       setvideoUrl(mediaBlobUrl);
     }
-  }, [mediaBlobUrl ,videoUrl,status]);
+  }, [mediaBlobUrl,status,isLoading]);
 
 
   return (
@@ -106,11 +120,15 @@ const VideoMessage = () => {
         color="neutral"
         onClick={status === "idle" || status === "stopped" ? startRecording : handleStop}
         title={status === "idle" || status === "stopped" ? "Video Recording" : 'Stop Recording Video'}
+        sx={{paddingRight:"8px"}}
       >
         {status === "idle" || status === "stopped"
           ? <VideocamIcon />
           : <i className="fa-solid fa-video fa-fade icn"></i>}
       </IconButton>
+      {
+      isLoading?<Loader></Loader>:""
+    }
     </>
   )
 }

@@ -9,9 +9,10 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import { useAuth } from '../Context/Auth';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import Loader from './Loader';
 
 const VoiceMessage = () => {
-  const { chatId, userData ,funUser} = useAuth()
+  const { chatId, userData ,funUser,isLoading , setIsloading} = useAuth()
   const [audioUrl, setAudioUrl] = useState('');
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -62,6 +63,7 @@ const VoiceMessage = () => {
 
   const handleUpload = async (url) => {
     try {
+      setIsloading(true)
       const response = await fetch(url);
       const blob = await response.blob();
       const audioRef = ref(storage, `audio/${Date.now()}.webm`);
@@ -72,19 +74,29 @@ const VoiceMessage = () => {
     } catch (error) {
       console.error('Error uploading audio:', error);
     }
+    finally {
+      setIsloading(false)
+    }
   };
 
   const handleStop = async () => {
     console.log('Stopping recording...');
+    try {
+      setIsloading(true)
     stopRecording();
     setTimeout(async () => {
       if (audioUrl) {
         await handleUpload(audioUrl);
       } else {
         toast.error("Some error occured !! Try again")
-        console.error('No mediaBlobUrl available.');
       }
     }, 2000)
+  }catch (error) {
+    console.error('No mediaBlobUrl available.',error);
+  }
+  finally {
+    setIsloading(false)
+  }
   };
 
 
@@ -109,6 +121,9 @@ const VoiceMessage = () => {
           ? <KeyboardVoiceIcon titleAccess='Voice Recording'/>
           : <i className="fa-solid fa-record-vinyl fa-fade icn" title='Stop Recording Audio'></i>}
       </IconButton>
+      {
+      isLoading?<Loader></Loader>:""
+    }
     </>
   )
 }

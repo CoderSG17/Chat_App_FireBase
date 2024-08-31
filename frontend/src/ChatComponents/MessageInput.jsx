@@ -22,9 +22,11 @@ import { ImCross } from 'react-icons/im';
 import SpeechToText from '../components/SpeechToText';
 import Styling from '../components/Styling';
 import { useTextStyle } from '../Context/StylingContext';
+import PdfMessage from '../components/PdfMessage';
+import Loader from '../components/Loader';
 
 export default function MessageInput() {
-  const { chatId, userData, funUser ,isReceiverBlocked,isCurrUserBlocked} = useAuth();
+  const { chatId, userData, funUser ,isReceiverBlocked,isCurrUserBlocked ,isLoading , setIsloading} = useAuth();
   const emojiRef = useRef(null);
   const buttonRef = useRef(null);
   const [text, setText] = useState("");
@@ -143,6 +145,7 @@ export default function MessageInput() {
 
   const handleSendImage = async () => {
     setShowCaptionModal(false)
+    setIsloading(true);
     try {
       let imgUrl = null;
       if (selectedImage) {
@@ -201,11 +204,15 @@ export default function MessageInput() {
       setCaption("");
       setShowCaptionModal(false);
     }
+    finally{
+      setIsloading(false)
+    }
   };
 
 
   return (
-    <Box sx={{ px: 2, pb: 3 }}>
+    <>
+    <Box sx={{ px: 2, pb: 1 }}>
       <FormControl sx={{ cursor: isCurrUserBlocked || isReceiverBlocked ? 'not-allowed':'pointer' }} >  
         <Textarea   
           placeholder={isCurrUserBlocked || isReceiverBlocked ?"You cannot send any message":"Type something here…"}
@@ -234,7 +241,7 @@ export default function MessageInput() {
               <div>
                 <span>
                   {toggleEmoji && (
-                    <div ref={emojiRef}>
+                    <div ref={emojiRef} className='emojiDiv'>
                       <EmojiPicker onEmojiClick={handleEmoji}                  
                       disabled={isCurrUserBlocked||isReceiverBlocked}
                       />
@@ -284,6 +291,7 @@ export default function MessageInput() {
                 <VoiceMessage></VoiceMessage>
                 <VideoMessage></VideoMessage>
                 <SpeechToText text={text} setText={setText}></SpeechToText>
+                <PdfMessage></PdfMessage>
                 <Styling></Styling>
             
               </div>
@@ -316,5 +324,9 @@ export default function MessageInput() {
         />
       </FormControl>
     </Box>
+    {
+      isLoading?<Loader></Loader>:""
+    }
+    </>
   );
 }

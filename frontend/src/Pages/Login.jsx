@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
+import Grid2 from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -15,9 +15,11 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { toast } from 'react-toastify';
-import { GoogleAuthProvider, signInWithEmailAndPassword ,signInWithPopup} from "firebase/auth";
+import { GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword ,signInWithPopup} from "firebase/auth";
 import { auth } from '../components/firebase';
 import GoogleButton from "react-google-button";
+import { collection , query ,where,getDocs} from 'firebase/firestore';
+import { db } from '../components/firebase';
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -105,6 +107,28 @@ const Login=()=> {
   };
 
 
+  const resetPass =async(email)=>{
+    if(!email){
+      toast.error('Please enter your email address')
+      return ;
+    }
+
+    try {
+        const userRef = collection(db,'users')
+        const q = query(userRef,where('email','==',email))
+        const querySnap = await getDocs(q)
+        if (!querySnap.empty) {
+            await sendPasswordResetEmail(auth,email)
+            toast.success('Reset Email sent successfully')
+        }
+        else{
+          toast.error("Email doesn't exist")
+        }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -152,6 +176,7 @@ const Login=()=> {
               value={userCredentials.password}
 
             />
+            <h4>Forgot Password? Enter your email and <span onClick={()=>resetPass(userCredentials.email)} className='spn'>Click Here</span></h4>
             <FormControlLabel
               control={<Checkbox color="primary" 
                 onChange={handleInput} checked={userCredentials.save==="yes"}
@@ -177,18 +202,18 @@ const Login=()=> {
             </Box>
 
 <br />
-            <Grid container style={{marginBottom:"25px"}}>
-              <Grid item xs>
+            <Grid2 container style={{marginBottom:"25px"}}>
+              <Grid2 item xs>
                 {/* <NavLink to="forgotPassword" variant="body2">
                   Forgot password?
                 </NavLink> */}
-              </Grid>
-              <Grid item>
+              </Grid2>
+              <Grid2 item>
                 <NavLink to="/register" variant="body2">
                   {"Don't have an account? Register"} 
                 </NavLink>
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </Box>
         </Box>
       </Container>
