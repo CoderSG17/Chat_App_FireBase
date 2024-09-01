@@ -82,7 +82,7 @@ export default function ChatListItem({chat, setSelectedChat ,selectedChat,allCha
     calculateTimeAgo(chat.updatedAt);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [timeAgo,chat]);
 
 
   return (

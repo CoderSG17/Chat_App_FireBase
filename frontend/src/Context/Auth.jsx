@@ -16,8 +16,6 @@ export const AuthProvider = ({ children }) => {
     const[isReceiverBlocked , setIsReceiverBlocked] = useState()
     const [funUser,setfunUser] = useState("")
 
-    console.log(chatId)
-    console.log(funUser)
 
     
     const changeChat =async(chatId , fnuser)=>{
@@ -59,7 +57,6 @@ export const AuthProvider = ({ children }) => {
 
 
 
-    console.log(user)
     
     
       const getUserData=async()=>{

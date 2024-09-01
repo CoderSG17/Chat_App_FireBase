@@ -22,7 +22,6 @@ export default function ChatsPane() {
   const [search, setSearch] = React.useState();
   const [filteredChats, setFilteredChats] = useState(chats); 
   
-console.log(chats)
 
 useEffect(() => {
   if (!user?.uid) return;

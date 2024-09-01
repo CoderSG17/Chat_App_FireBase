@@ -16,6 +16,7 @@
     "@mui/icons-material": "^6.0.0",
     "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "^6.0.0",
+    "@zegocloud/zego-uikit-prebuilt": "^2.8.1",
     "emoji-picker-react": "^4.11.1",
     "firebase": "^10.12.5",
     "react": "^18.3.1",

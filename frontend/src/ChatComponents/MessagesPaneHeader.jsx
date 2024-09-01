@@ -17,13 +17,20 @@ import { db } from '../components/firebase';
 import { RxAvatar } from "react-icons/rx";
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MediaDrawer from "../components/MediaDrawer"
+import {useNavigate} from 'react-router-dom'
+
 
 export default function MessagesPaneHeader() {
+  const { funUser, chatId, isReceiverBlocked, isCurrUserBlocked, changeBlockStatus, userData } = useAuth()
+  
+  const online = Date.now() - userData?.lastSeen <=10001
+
   const [open, setOpen] = useState();
   const [showMedia, setShowMedia] = useState();
   const openRef = React.useRef(null);
-  const { funUser, chatId, isReceiverBlocked, isCurrUserBlocked, changeBlockStatus, userData } = useAuth()
-  console.log(funUser)
+
+
+  const navigate = useNavigate()
 
   const handleBlock = async () => {
     if (!funUser) return;
@@ -52,6 +59,10 @@ export default function MessagesPaneHeader() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+
+  const userName = userData.name.split(" ")
+  .join("");
 
 
 
@@ -88,24 +99,37 @@ export default function MessagesPaneHeader() {
             fontSize="lg"
             component="h2"
             noWrap
-          // endDecorator={
-          //   sender.online ? (
-          //     <Chip
-          //       variant="outlined"
-          //       size="sm"
-          //       color="neutral"
-          //       sx={{
-          //         // borderRadius: 'sm',
-          //       }}
-          //       startDecorator={
-          //         <CircleIcon sx={{ fontSize: 8 }} color="success" />
-          //       }
-          //       slotProps={{ root: { component: 'span' } }}
-          //     >
-          //       Online
-          //     </Chip>
-          //   ) : undefined
-          // }
+          endDecorator={
+            online ? (
+              <Chip
+                variant="outlined"
+                size="sm"
+                color="neutral"
+                sx={{
+                  // borderRadius: 'sm',
+                }}
+                startDecorator={
+                  <CircleIcon sx={{ fontSize: 8 }} color="success" />
+                }
+                slotProps={{ root: { component: 'span' } }}
+              >
+                Online
+              </Chip>
+            ) : <Chip
+                variant="outlined"
+                size="sm"
+                color="neutral"
+                sx={{
+                  // borderRadius: 'sm',
+                }}
+                startDecorator={
+                  <CircleIcon sx={{ fontSize: 8 }} color="danger" />
+                }
+                slotProps={{ root: { component: 'span' } }}
+              >
+                Offline
+              </Chip>
+          }
           >
             {funUser?.name ? funUser?.name :"lorem ipsum"}
           </Typography>
@@ -114,28 +138,17 @@ export default function MessagesPaneHeader() {
       </Stack>
       <Stack spacing={1} direction="row" alignItems="center">
         <Button
-          startDecorator={<PhoneInTalkRoundedIcon />}
+          startDecorator={<PhoneInTalkRoundedIcon /> }
           color="neutral"
           variant="outlined"
           size="sm"
           sx={{
             display: { xs: 'none', md: 'inline-flex' },
           }}
+          onClick={()=>navigate(`/room/${userName}`)}
         >
-          Audio Call
+          Video/Audio Call
         </Button>
-        <Button
-          startDecorator={<VideoCallIcon />}
-          color="neutral"
-          variant="outlined"
-          size="sm"
-          sx={{
-            display: { xs: 'none', md: 'inline-flex' },
-          }}
-        >
-          Video Call
-        </Button>
-       
         <IconButton size="sm" variant="plain" color="neutral" onClick={() => setOpen(!open)}>
           <MoreVertRoundedIcon />
         </IconButton>

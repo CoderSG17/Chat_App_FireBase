@@ -294,6 +294,8 @@ body{
   border-radius: 5px;
   background-color:lightblue;
 }
+  
+
 
 .btn2 {
   background-color: red;
@@ -637,4 +639,11 @@ width: fit-content;
 .emojiDiv{
   position: absolute;
   bottom: 100%;
+}
+
+.return{
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

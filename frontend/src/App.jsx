@@ -4,6 +4,8 @@ import Login from './Pages/Login'
 import Register from './Pages/Register'
 import Home from './Pages/Home'
 import ProfileUpdate from './Pages/ProfileUpdate'
+import VideoCall from './components/VideoCall'
+
 const App = () => {
 
   // // const socket = io('http://localhost:5000')
@@ -32,6 +34,9 @@ const App = () => {
           </Route>
           <Route path='/updateProfile' element={<ProfileUpdate></ProfileUpdate>}>
           </Route>
+          <Route path='/room/:userName' element={<VideoCall></VideoCall>}>
+          </Route>
+
           
         </Routes>
       </BrowserRouter>

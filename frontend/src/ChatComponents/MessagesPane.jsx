@@ -16,7 +16,6 @@ export default function MessagesPane({ selectedChat }) {
   const { chatId ,userData} = useAuth()
   const [chatMessages, setChatMessages] = React.useState([]);
 
-  console.log(chatMessages)
 
   React.useEffect(() => {
     if (!chatId) return;
